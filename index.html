@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1021">
+  <meta name="description" content="O simulare interactivă pentru explorarea mișcării relative a planetelor.">
+  <title>Univers în mișcare · Laboratorul de fizică</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/p5.min.js" defer></script>
+  <script src="model.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inceput"><span class="brand-icon" aria-hidden="true">✦</span><span>LABORATORUL DE FIZICĂ<small>Explorăm lumea împreună</small></span></a>
+    <span class="lesson-tag">CLASA A VI-A <span>·</span> MIȘCARE ȘI REPAUS</span>
+  </header>
+
+  <main id="inceput">
+    <section class="intro">
+      <div>
+        <p class="eyebrow"><span class="spark">✳</span> O ALTFEL DE CĂLĂTORIE</p>
+        <h1>Totul e în <em>mișcare.</em><br>Depinde de unde privești.</h1>
+        <p class="intro-text">Pornește într-o călătorie prin Sistemul Solar și descoperă cum se schimbă mișcarea atunci când alegi un alt reper.</p>
+      </div>
+      <div class="intro-note"><span class="note-icon" aria-hidden="true">✧</span><span><strong>De explorat împreună</strong><br>Un mic experiment pentru o idee mare.</span></div>
+    </section>
+
+    <section class="workspace" aria-label="Simulatorul Sistemului Solar">
+      <div class="visual-panel">
+        <div class="visual-top">
+          <div><p class="panel-kicker"><span class="live-dot"></span> SIMULARE INTERACTIVĂ</p><h2>Sistemul Solar <span>în mișcare</span></h2></div>
+          <div class="reference-badge"><span aria-hidden="true">◎</span> REPER <strong id="reference-label">Soarele</strong></div>
+          <div class="presentation-actions">
+            <button id="panel-toggle" class="presentation-button" type="button" aria-controls="control-panel" aria-expanded="true" hidden>Ascunde comenzile</button>
+            <button id="fullscreen-toggle" class="presentation-button" type="button" aria-pressed="false">⛶ &nbsp; Ecran complet</button>
+          </div>
+        </div>
+        <div id="canvas-container" class="canvas-container">
+          <noscript>Activează JavaScript pentru a folosi simularea.</noscript>
+        </div>
+        <div class="legend" aria-label="Legenda corpurilor cerești">
+          <span><i style="--body-color:#ffc65e"></i>Soarele</span>
+          <span><i style="--body-color:#aebac7"></i>Mercur</span>
+          <span><i style="--body-color:#eac08a"></i>Venus</span>
+          <span><i style="--body-color:#73b5ec"></i>Pământ</span>
+          <span><i style="--body-color:#e58269"></i>Marte</span>
+          <span><i style="--body-color:#e6b185"></i>Jupiter</span>
+          <span><i style="--body-color:#e9c995"></i>Saturn</span>
+          <span><i style="--body-color:#9bd8da"></i>Uranus</span>
+          <span><i style="--body-color:#779feb"></i>Neptun</span>
+        </div>
+        <div class="canvas-bottom">
+          <span><span class="little-star" aria-hidden="true">✦</span> Privim dinspre nordul Sistemului Solar</span>
+          <span id="time-label">Timp simulat: 0 zile</span>
+        </div>
+      </div>
+
+      <p id="fullscreen-status" class="fullscreen-status" role="status" hidden></p>
+      <aside id="control-panel" class="control-panel" aria-label="Comenzile simulării">
+        <div class="control-title"><div><p class="panel-kicker">TU ALEGI PERSPECTIVA</p><h2>Panou de control</h2></div><span class="control-icon" aria-hidden="true">⌁</span></div>
+        <div class="control-block">
+          <label for="reference">Sistem de referință</label>
+          <p>Ce corp rămâne fix în centru?</p>
+          <select id="reference">
+            <option value="sun">☀ Soarele</option>
+            <option value="earth">● Pământul</option>
+            <option value="mars">● Marte</option>
+            <option value="jupiter">● Jupiter</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <div class="control-block">
+          <div class="control-heading"><label for="speed">Viteza animației</label><output id="speed-value" for="speed"></output></div>
+          <p>Schimbă ritmul trecerii timpului.</p>
+          <input id="speed" type="range" min="0" max="6" step="1" value="3">
+          <div class="range-ends"><span>MAI ÎNCET</span><span>MAI REPEDE</span></div>
+        </div>
+        <div class="divider"></div>
+        <div class="control-block">
+          <div class="control-heading"><label for="zoom">Apropiere</label><output id="zoom-value" for="zoom"></output></div>
+          <p>Apropie sau îndepărtează imaginea.</p>
+          <div class="zoom-row"><button id="zoom-out" class="square-button" type="button" aria-label="Micșorează">−</button><input id="zoom" type="range" min="0.5" max="4" step="0.1" value="1"><button id="zoom-in" class="square-button" type="button" aria-label="Mărește">+</button></div>
+        </div>
+        <div class="divider"></div>
+        <label class="toggle-row" for="trails"><span><strong>Urme de mișcare</strong><small>Traiectorii care se estompează</small></span><input id="trails" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+        <div class="control-block trail-length">
+          <div class="control-heading"><label for="trail-length">Lungimea urmei</label><output id="trail-length-value" for="trail-length zoom"></output></div>
+          <p>Se ajustează automat la apropiere.</p>
+          <input id="trail-length" type="range" min="10" max="200" step="10" value="100" aria-describedby="trail-length-help">
+          <div id="trail-length-help" class="range-ends"><span>MAI SCURTĂ</span><span>MAI LUNGĂ</span></div>
+        </div>
+        <div class="action-row"><button id="play" class="primary-button" type="button">Ⅱ &nbsp; Pauză</button><button id="reset" class="reset-button" type="button" title="Reia simularea de la început" aria-label="Reia simularea de la început">↺</button></div>
+      </aside>
+    </section>
+
+    <section class="below">
+      <article class="idea-card">
+        <span class="idea-icon" aria-hidden="true">✳</span>
+        <div><p class="panel-kicker">IDEA DE DESCOPERIT</p><h2>Mișcarea este relativă.</h2><p>Un corp poate fi în repaus față de un reper și în mișcare față de altul. Schimbă reperul și urmărește ce se întâmplă cu Soarele și cu Pământul.</p></div>
+      </article>
+      <article class="explore-card">
+        <p class="panel-kicker">ÎNCEARCĂ ȘI OBSERVĂ <span aria-hidden="true">↗</span></p>
+        <h2>O întrebare pentru tine</h2>
+        <p>Ce traiectorie descrie Soarele când alegi Pământul drept reper? Dar când alegi Soarele?</p>
+      </article>
+    </section>
+    <section class="model-note" aria-labelledby="model-title">
+      <h2 id="model-title">Despre acest model</h2>
+      <p>Este o simulare didactică, nu o hartă astronomică: orbitele sunt considerate circulare și în același plan, iar pozițiile inițiale sunt alese arbitrar. Distanțele față de Soare sunt comprimate, dimensiunile corpurilor nu sunt la scară, iar formele traiectoriilor sunt deformate. Perioadele orbitale sunt aproximative. Soarele este fix în modelul heliocentric, nu față de centrul de masă al Sistemului Solar.</p>
+      <p>Reperele se deplasează odată cu planeta aleasă, dar axele lor nu se rotesc odată cu aceasta. Urmele arată o porțiune din mișcarea simulată, nu orbite complete.</p>
+    </section>
+  </main>
+  <footer><span>✦ &nbsp; LABORATORUL DE FIZICĂ</span><span>O explorare pentru minți curioase.</span></footer>
+</body>
+</html>
