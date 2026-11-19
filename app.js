@@ -139,6 +139,56 @@
     cardsButton.setAttribute("aria-expanded", String(!below.hidden));
     cardsButton.textContent = below.hidden ? "Arată cardurile" : "Ascunde cardurile";
   });
+
+  const exploreCard = below.querySelector(".explore-card");
+  const resizeHandle = exploreCard.querySelector(".card-resize-handle");
+
+  function resizeExploreCard(width, height) {
+    const maxWidth = Math.max(320, below.clientWidth - 300);
+    const nextWidth = Math.round(Math.min(maxWidth, Math.max(320, width)));
+    const nextHeight = Math.round(Math.min(480, Math.max(160, height)));
+    const widthGrowth = Math.max(0, nextWidth - 415) / 485;
+    const heightGrowth = Math.max(0, nextHeight - 185) / 295;
+    const textGrowth = Math.min(4.5, 1.5 * widthGrowth + 3 * heightGrowth);
+
+    exploreCard.style.width = `${nextWidth}px`;
+    exploreCard.style.height = `${nextHeight}px`;
+    exploreCard.style.setProperty("--explore-font-size", `${11 + textGrowth}px`);
+    exploreCard.style.setProperty("--explore-heading-size", `${16 + textGrowth * 0.55}px`);
+  }
+
+  resizeHandle.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    resizeHandle.setPointerCapture(event.pointerId);
+    const startWidth = exploreCard.getBoundingClientRect().width;
+    const startHeight = exploreCard.getBoundingClientRect().height;
+    const startX = event.clientX;
+    const startY = event.clientY;
+
+    const onPointerMove = (moveEvent) => {
+      resizeExploreCard(
+        startWidth + moveEvent.clientX - startX,
+        startHeight - (moveEvent.clientY - startY)
+      );
+    };
+    const onPointerUp = () => {
+      resizeHandle.removeEventListener("pointermove", onPointerMove);
+      resizeHandle.removeEventListener("pointerup", onPointerUp);
+      resizeHandle.removeEventListener("pointercancel", onPointerUp);
+    };
+    resizeHandle.addEventListener("pointermove", onPointerMove);
+    resizeHandle.addEventListener("pointerup", onPointerUp);
+    resizeHandle.addEventListener("pointercancel", onPointerUp);
+  });
+
+  resizeHandle.addEventListener("keydown", (event) => {
+    if (!["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) return;
+    event.preventDefault();
+    const rect = exploreCard.getBoundingClientRect();
+    const widthDelta = event.key === "ArrowRight" ? 24 : event.key === "ArrowLeft" ? -24 : 0;
+    const heightDelta = event.key === "ArrowUp" ? 24 : event.key === "ArrowDown" ? -24 : 0;
+    resizeExploreCard(rect.width + widthDelta, rect.height + heightDelta);
+  });
   updateControls();
 
   new p5((p) => {
@@ -156,7 +206,30 @@
 
     function screenPoint(body, reference, time, scale) {
       const point = relativePosition(body, reference, time);
-      return { x: p.width / 2 + point.x * scale, y: p.height / 2 - point.y * scale };
+      const center = animationCenter();
+      return { x: center.x + point.x * scale, y: center.y - point.y * scale };
+    }
+
+    function animationCenter() {
+      if (!workspace.classList.contains("is-presentation") || below.hidden) {
+        return { x: p.width / 2, y: p.height / 2 };
+      }
+
+      const canvasRect = container.getBoundingClientRect();
+      const cardsRect = below.getBoundingClientRect();
+      const controlRect = controlPanel.hidden ? null : controlPanel.getBoundingClientRect();
+      const inset = 16;
+      const left = inset;
+      const top = inset;
+      const right = controlRect
+        ? Math.min(p.width - inset, controlRect.left - canvasRect.left - inset)
+        : p.width - inset;
+      const bottom = Math.min(p.height - inset, cardsRect.top - canvasRect.top - inset);
+
+      return {
+        x: left + Math.max(0, right - left) / 2,
+        y: top + Math.max(0, bottom - top) / 2
+      };
     }
 
     function drawBackground() {
