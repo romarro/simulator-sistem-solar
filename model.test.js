@@ -7,7 +7,7 @@ const body = (id) => bodies.find((item) => item.id === id);
 const near = (a, b) => assert.ok(Math.abs(a - b) < 1e-10, `${a} != ${b}`);
 
 test("the selected reference remains at the origin at any time", () => {
-  for (const id of ["sun", "earth", "mars", "jupiter"]) {
+  for (const id of ["sun", "mercury", "venus", "earth", "mars", "jupiter"]) {
     for (const time of [0, 42, 10000]) {
       assert.deepEqual(relativePosition(body(id), body(id), time), { x: 0, y: 0 });
     }

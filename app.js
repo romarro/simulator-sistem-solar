@@ -18,10 +18,14 @@
   const controlPanel = document.getElementById("control-panel");
   const fullscreenButton = document.getElementById("fullscreen-toggle");
   const panelButton = document.getElementById("panel-toggle");
+  const cardsButton = document.getElementById("cards-toggle");
+  const below = document.getElementById("exploration-cards");
+  const belowHost = below.parentElement;
+  const belowNextSibling = below.nextElementSibling;
   const fullscreenStatus = document.getElementById("fullscreen-status");
   const backgroundSections = document.querySelectorAll(".topbar, .intro, .below, .model-note, footer");
   const speedSteps = [1, 3, 10, 30, 100, 365, 1000];
-  const referenceNames = { sun: "Soarele", earth: "Pământul", mars: "Marte", jupiter: "Jupiter" };
+  const referenceNames = { sun: "Soarele", mercury: "Mercur", venus: "Venus", earth: "Pământul", mars: "Marte", jupiter: "Jupiter" };
   const state = { days: 0, playing: true };
 
   function updateTime() {
@@ -47,7 +51,7 @@
   trailsInput.addEventListener("change", updateControls);
   document.getElementById("zoom-in").addEventListener("click", () => {
     zoomInput.value = Math.min(Number(zoomInput.max), Number(zoomInput.value) + 0.2);
-    updateTime();
+    updateControls();
   });
   document.getElementById("zoom-out").addEventListener("click", () => {
     zoomInput.value = Math.max(Number(zoomInput.min), Number(zoomInput.value) - 0.2);
@@ -67,10 +71,20 @@
     workspace.classList.toggle("is-presentation", active);
     workspace.classList.toggle("presentation-fallback", active && fallback);
     document.body.classList.toggle("presentation-open", active && fallback);
+    if (active) {
+      workspace.appendChild(below);
+    } else {
+      below.hidden = false;
+      cardsButton.hidden = true;
+      cardsButton.setAttribute("aria-expanded", "true");
+      cardsButton.textContent = "Ascunde cardurile";
+      belowHost.insertBefore(below, belowNextSibling);
+    }
     for (const section of backgroundSections) section.inert = active && fallback;
     fullscreenButton.setAttribute("aria-pressed", String(active));
     fullscreenButton.textContent = active ? "⛶  Ieși din ecran complet" : "⛶  Ecran complet";
     panelButton.hidden = !active;
+    cardsButton.hidden = !active;
     controlPanel.hidden = false;
     panelButton.setAttribute("aria-expanded", "true");
     panelButton.textContent = "Ascunde comenzile";
@@ -119,6 +133,11 @@
     controlPanel.hidden = !controlPanel.hidden;
     panelButton.setAttribute("aria-expanded", String(!controlPanel.hidden));
     panelButton.textContent = controlPanel.hidden ? "Arată comenzile" : "Ascunde comenzile";
+  });
+  cardsButton.addEventListener("click", () => {
+    below.hidden = !below.hidden;
+    cardsButton.setAttribute("aria-expanded", String(!below.hidden));
+    cardsButton.textContent = below.hidden ? "Arată cardurile" : "Ascunde cardurile";
   });
   updateControls();
 

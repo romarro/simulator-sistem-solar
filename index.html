@@ -35,6 +35,7 @@
           <div class="reference-badge"><span aria-hidden="true">◎</span> REPER <strong id="reference-label">Soarele</strong></div>
           <div class="presentation-actions">
             <button id="panel-toggle" class="presentation-button" type="button" aria-controls="control-panel" aria-expanded="true" hidden>Ascunde comenzile</button>
+            <button id="cards-toggle" class="presentation-button" type="button" aria-controls="exploration-cards" aria-expanded="true" hidden>Ascunde cardurile</button>
             <button id="fullscreen-toggle" class="presentation-button" type="button" aria-pressed="false">⛶ &nbsp; Ecran complet</button>
           </div>
         </div>
@@ -66,6 +67,8 @@
           <p>Ce corp rămâne fix în centru?</p>
           <select id="reference">
             <option value="sun">☀ Soarele</option>
+            <option value="mercury">● Mercur</option>
+            <option value="venus">● Venus</option>
             <option value="earth">● Pământul</option>
             <option value="mars">● Marte</option>
             <option value="jupiter">● Jupiter</option>
@@ -82,7 +85,7 @@
         <div class="control-block">
           <div class="control-heading"><label for="zoom">Apropiere</label><output id="zoom-value" for="zoom"></output></div>
           <p>Apropie sau îndepărtează imaginea.</p>
-          <div class="zoom-row"><button id="zoom-out" class="square-button" type="button" aria-label="Micșorează">−</button><input id="zoom" type="range" min="0.5" max="4" step="0.1" value="1"><button id="zoom-in" class="square-button" type="button" aria-label="Mărește">+</button></div>
+          <div class="zoom-row"><button id="zoom-out" class="square-button" type="button" aria-label="Micșorează">−</button><input id="zoom" type="range" min="0.5" max="6" step="0.1" value="1"><button id="zoom-in" class="square-button" type="button" aria-label="Mărește">+</button></div>
         </div>
         <div class="divider"></div>
         <label class="toggle-row" for="trails"><span><strong>Urme de mișcare</strong><small>Traiectorii care se estompează</small></span><input id="trails" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
@@ -96,15 +99,20 @@
       </aside>
     </section>
 
-    <section class="below">
+    <section id="exploration-cards" class="below">
       <article class="idea-card">
         <span class="idea-icon" aria-hidden="true">✳</span>
         <div><p class="panel-kicker">IDEA DE DESCOPERIT</p><h2>Mișcarea este relativă.</h2><p>Un corp poate fi în repaus față de un reper și în mișcare față de altul. Schimbă reperul și urmărește ce se întâmplă cu Soarele și cu Pământul.</p></div>
       </article>
       <article class="explore-card">
         <p class="panel-kicker">ÎNCEARCĂ ȘI OBSERVĂ <span aria-hidden="true">↗</span></p>
-        <h2>O întrebare pentru tine</h2>
-        <p>Ce traiectorie descrie Soarele când alegi Pământul drept reper? Dar când alegi Soarele?</p>
+        <h2>Întrebări pentru explorare</h2>
+        <ul class="question-list">
+          <li>Ce traiectorie descrie <strong>Marte</strong> când alegem <strong>Soarele</strong> ca sistem de referință, și cum se schimbă când alegem <strong>Pământul</strong>?</li>
+          <li>Ce traiectorie are <strong>Pământul</strong> când <strong>Marte</strong> este sistemul de referință?</li>
+          <li>Cum se mișcă <strong>Soarele</strong> atunci când alegem <strong>Venus</strong> sau <strong>Mercur</strong> drept reper?</li>
+          <li>Ce planetă pare să se deplaseze în sens opus față de punctul de vedere ales?</li>
+        </ul>
       </article>
     </section>
     <section class="model-note" aria-labelledby="model-title">
